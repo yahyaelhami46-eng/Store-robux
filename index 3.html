@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zinox Store - Robux & Free Fire Hub</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0b0c10;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(11, 12, 16, 0.85), rgba(11, 12, 16, 0.98)), 
+                  url('https://images.unsplash.com/photo-1627856013091-fed6e4e30025?q=80&w=1000') no-repeat center center/cover;
+      filter: blur(3px);
+      z-index: -1;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1200px;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-login-head, .btn-logout {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-login-head:hover, .btn-logout:hover {
+      background: #e0e0e0;
+    }
+
+    .user-profile-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 5px 12px;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+    }
+
+    .user-profile-box img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .menu-icon {
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .menu-icon span {
+      width: 22px;
+      height: 2px;
+      background-color: #fff;
+      border-radius: 2px;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 280px;
+      height: 100%;
+      background: rgba(15, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      transition: 0.3s ease;
+      padding: 30px 20px;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .side-menu.active { right: 0; }
+    .side-menu h3 { margin-bottom: 25px; font-size: 20px; }
+    .side-menu ul { list-style: none; }
+    .side-menu li {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .side-menu li:hover { color: #5865F2; }
+
+    main {
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .page-section { display: none; width: 100%; }
+    .page-section.active { display: flex; flex-direction: column; align-items: center; }
+
+    .announcement-badge {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-title { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 15px; }
+    .hero-subtitle { color: #a0a0a0; font-size: 16px; margin-bottom: 30px; }
+
+    /* Discord Card styling */
+    .discord-card {
+      background: rgba(88, 101, 242, 0.15);
+      border: 1px solid rgba(88, 101, 242, 0.4);
+      backdrop-filter: blur(10px);
+      padding: 25px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 450px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-discord {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background: #5865F2;
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s;
+    }
+
+    .btn-discord:hover { background: #4752C4; }
+
+    .form-box {
+      background: rgba(20, 22, 29, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-box input, .form-box select {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      outline: none;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(20, 22, 29, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover { transform: translateY(-5px); }
+    .card img.png-icon { width: 64px; height: 64px; object-fit: contain; }
+    .card .price { color: #2ed573; font-weight: 700; }
+    .card .seller-info { font-size: 12px; color: #aaa; }
+
+    .btn-buy, .btn-action {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #000000;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-buy:hover, .btn-action:hover { background: #e0e0e0; }
+
+    .modal-overlay, .chat-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-box, .chat-box {
+      background: #14161d;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-close, .chat-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      cursor: pointer;
+      font-size: 20px;
+      color: #888;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #0b0c10;
+      color: #fff;
+      outline: none;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #ffffff;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .switch-auth {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #a0a0a0;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .switch-auth:hover { color: #fff; }
+
+    .chat-messages {
+      height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .chat-message {
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .msg-incoming { background: rgba(255, 255, 255, 0.1); align-self: flex-start; }
+    .msg-outgoing { background: #00b894; color: #fff; align-self: flex-end; }
+
+    .chat-input-area { display: flex; gap: 8px; }
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: #0b0c10;
+      color: #fff;
+      outline: none;
+    }
+
+    .chat-input-area button {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      background: #fff;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-overlay"></div>
+
+  <!-- Header / Navbar -->
+  <header>
+    <div class="logo" onclick="showPage('homePage')">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.2L18.5 8 12 11.8 5.5 8 12 4.2z"/>
+      </svg>
+      ZINOX
+    </div>
+    
+    <div class="nav-right">
+      <div id="authContainer">
+        <button class="btn-login-head" onclick="openLogin()">
+          <img src="https://img.icons8.com/color/48/user.png" alt="User" width="20"> تسجيل الدخول
+        </button>
+      </div>
+      <div class="menu-icon" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Side Navigation Drawer -->
+  <div class="side-menu" id="sideMenu">
+    <h3>القائمة الرئيسية</h3>
+    <ul>
+      <li onclick="showPage('homePage')">الرئيسية</li>
+      <li onclick="showPage('robuxPage')">سوق Robux</li>
+      <li onclick="showPage('ffPage')">سوق Free Fire</li>
+      <li onclick="showPage('tradePage')">مركز التبادل (Trade)</li>
+      <li><a href="https://discord.gg/gA7NxmP5s" target="_blank" style="color: inherit; text-decoration: none;">سيرفر Discord</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <!-- الصفحة الرئيسية -->
+    <div class="page-section active" id="homePage">
+      <div class="announcement-badge">
+        <span>🔥 متجر ZINOX - شحن Robux و Free Fire بأرخص الأسعار 🔥</span>
+      </div>
+      <h1 class="hero-title">Your Gaming<br>Hub</h1>
+      <p class="hero-subtitle">تداول وبيع واشترِ شحن روبوكس، جواهر فري فاير وتبادل العناصر بكل سهولة.</p>
+
+      <!-- Discord Community Card in Home -->
+      <div class="discord-card">
+        <img src="https://img.icons8.com/color/96/discord-logo.png" width="60" alt="Discord">
+        <h3>انضم إلى سيرفر Discord الخاص بنا</h3>
+        <p style="font-size: 13px; color: #ccc;">تواصل مع مجتمع ZINOX، وتابع أحدث العروض والمسابقات الحصرية!</p>
+        <a href="https://discord.gg/gA7NxmP5s" target="_blank" class="btn-discord">
+          انضمام الآن إلى Discord
+        </a>
+      </div>
+    </div>
+
+    <!-- Robux Market -->
+    <div class="page-section" id="robuxPage">
+      <h2>سوق Robux</h2>
+      <div class="form-box" id="robuxAdminForm" style="display: none;">
+        <h3>[Owner Area] إضافة باقة Robux جديدة</h3>
+        <input type="text" id="robuxItemName" placeholder="كمية الروبوكس (مثال: 1000 Robux)">
+        <input type="text" id="robuxItemPrice" placeholder="السعر بالدرهم / $">
+        <input type="text" id="robuxItemImg" placeholder="رابط الصورة (اختياري)">
+        <button class="btn-action" onclick="addMarketItem('robux')">نشر الباقة</button>
+      </div>
+      <div class="grid-container" id="robuxGrid"></div>
+    </div>
+
+    <!-- Free Fire Market -->
+    <div class="page-section" id="ffPage">
+      <h2>سوق Free Fire</h2>
+      <div class="form-box" id="ffAdminForm" style="display: none;">
+        <h3>[Owner Area] إضافة باقة Free Fire جديدة</h3>
+        <input type="text" id="ffItemName" placeholder="اسم العرض (مثال: 1080 Gem)">
+        <input type="text" id="ffItemPrice" placeholder="السعر بالدرهم / $">
+        <input type="text" id="ffItemImg" placeholder="رابط الصورة (اختياري)">
+        <button class="btn-action" onclick="addMarketItem('ff')">نشر الباقة</button>
+      </div>
+      <div class="grid-container" id="ffGrid"></div>
+    </div>
+
+    <!-- Trade Market -->
+    <div class="page-section" id="tradePage">
+      <h2>مركز التبادل (Trade)</h2>
+      <div class="form-box">
+        <h3>إنشاء عرض تبادل جديد</h3>
+        <select id="tradeCategory">
+          <option value="Blox Fruits">Trade Blox Fruits</option>
+          <option value="Steal a Brainrot">Trade Steal a Brainrot</option>
+        </select>
+        <input type="text" id="haveItem" placeholder="شنو عندك؟ (مثال: Dragon Fruit)">
+        <input type="text" id="wantItem" placeholder="شنو بغيتي؟ (مثال: Leopard Fruit)">
+        <button class="btn-action" onclick="submitTrade()">نشر التبادل</button>
+      </div>
+      <div class="grid-container" id="tradeGrid"></div>
+    </div>
+  </main>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal-overlay" id="editProfileModal">
+    <div class="modal-box">
+      <span class="modal-close" onclick="closeEditProfile()">&times;</span>
+      <h2>تعديل الملف الشخصي</h2>
+      <br>
+      <input type="text" id="editDisplayName" class="auth-input" placeholder="اسم المستخدم الجديد">
+      <input type="text" id="editPhotoURL" class="auth-input" placeholder="رابط الصورة الشخصية (URL)">
+      <button type="button" class="login-btn" onclick="saveProfileChanges()">حفظ التغييرات</button>
+    </div>
+  </div>
+
+  <!-- Chat Modal -->
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-box">
+      <span class="chat-close" onclick="closeChat()">&times;</span>
+      <h3 id="chatTitle">محادثة التبادل</h3>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInputMsg" placeholder="اكتب رسالتك..." onkeypress="handleChatEnter(event)">
+        <button onclick="sendChatMessage()">إرسال</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal (Login / Register) -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-box">
+      <span class="modal-close" onclick="closeLogin()">&times;</span>
+      <h2 id="authModalTitle">تسجيل الدخول</h2>
+      <br>
+      <input type="text" id="usernameInput" class="auth-input" placeholder="اسم المستخدم (Username)">
+      <input type="password" id="passwordInput" class="auth-input" placeholder="كلمة المرور (Password)">
+      <input type="password" id="confirmPasswordInput" class="auth-input" placeholder="تأكيد كلمة المرور" style="display: none;">
+      
+      <button type="button" class="login-btn" id="authSubmitBtn" onclick="handleAuth()">دخول</button>
+      <div class="switch-auth" id="switchAuthBtn" onclick="toggleAuthMode()">معندكش حساب؟ أنشئ حساب جديد (Register)</div>
+    </div>
+  </div>
+
+  <script>
+    const OWNER_USERNAME = "its_me_fooxe";
+    const OWNER_PASS = "yahya2014@@";
+    const DISCORD_LINK = "https://discord.gg/gA7NxmP5s";
+
+    let currentUser = null;
+    let isRegisterMode = false;
+
+    function getRegisteredUsers() {
+      return JSON.parse(localStorage.getItem('zinox_registered_users')) || {};
+    }
+
+    function saveRegisteredUsers(users) {
+      localStorage.setItem('zinox_registered_users', JSON.stringify(users));
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      const title = document.getElementById('authModalTitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const switchBtn = document.getElementById('switchAuthBtn');
+      const confirmInput = document.getElementById('confirmPasswordInput');
+
+      if (isRegisterMode) {
+        title.innerText = "إنشاء حساب جديد";
+        submitBtn.innerText = "تسجيل الحساب";
+        switchBtn.innerText = "عندك حساب؟ تسجيل الدخول (Login)";
+        confirmInput.style.display = 'block';
+      } else {
+        title.innerText = "تسجيل الدخول";
+        submitBtn.innerText = "دخول";
+        switchBtn.innerText = "معندكش حساب؟ أنشئ حساب جديد (Register)";
+        confirmInput.style.display = 'none';
+      }
+    }
+
+    function updateAuthUI() {
+      const authContainer = document.getElementById('authContainer');
+      const robuxAdminForm = document.getElementById('robuxAdminForm');
+      const ffAdminForm = document.getElementById('ffAdminForm');
+
+      if (currentUser) {
+        authContainer.innerHTML = `
+          <div class="user-profile-box" onclick="openEditProfile()">
+            <img src="${currentUser.photoURL}" alt="User">
+            <span>${currentUser.displayName}</span>
+          </div>
+          <button class="btn-logout" onclick="logout()">خروج</button>
+        `;
+        closeLogin();
+
+        if (currentUser.displayName.toLowerCase() === OWNER_USERNAME.toLowerCase()) {
+          robuxAdminForm.style.display = 'flex';
+          ffAdminForm.style.display = 'flex';
+        } else {
+          robuxAdminForm.style.display = 'none';
+          ffAdminForm.style.display = 'none';
+        }
+      } else {
+        authContainer.innerHTML = `
+          <button class="btn-login-head" onclick="openLogin()">
+            <img src="https://img.icons8.com/color/48/user.png" alt="User" width="20"> تسجيل الدخول
+          </button>
+        `;
+        robuxAdminForm.style.display = 'none';
+        ffAdminForm.style.display = 'none';
+      }
+    }
+
+    function handleAuth() {
+      const username = document.getElementById('usernameInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+
+      if (!username || !password) {
+        alert("المرجو إدخال اسم المستخدم وكلمة المرور!");
+        return;
+      }
+
+      const users = getRegisteredUsers();
+
+      if (isRegisterMode) {
+        const confirmPass = document.getElementById('confirmPasswordInput').value.trim();
+        if (password !== confirmPass) {
+          alert("❌ كلمتا المرور غير متطابقتين!");
+          return;
+        }
+
+        if (username.toLowerCase() === OWNER_USERNAME.toLowerCase()) {
+          alert("❌ اسم المستخدم هذا مخصص للأدمن فقط!");
+          return;
+        }
+
+        if (users[username.toLowerCase()]) {
+          alert("❌ اسم المستخدم موجود بالفعل، اختر اسماً آخر!");
+          return;
+        }
+
+        users[username.toLowerCase()] = {
+          username: username,
+          password: password,
+          photoURL: 'https://img.icons8.com/color/48/user.png'
+        };
+
+        saveRegisteredUsers(users);
+
+        currentUser = {
+          displayName: username,
+          photoURL: 'https://img.icons8.com/color/48/user.png'
+        };
+
+        localStorage.setItem('zinox_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        alert("🎉 تم إنشاء الحساب وتسجيل الدخول بنجاح!");
+
+      } else {
+        if (username.toLowerCase() === OWNER_USERNAME.toLowerCase()) {
+          if (password !== OWNER_PASS) {
+            alert("❌ كلمة المرور غير صحيحة لحساب الأدمن!");
+            return;
+          }
+        } else {
+          const userObj = users[username.toLowerCase()];
+          if (!userObj || userObj.password !== password) {
+            alert("❌ اسم المستخدم أو كلمة المرور غير صحيحة!");
+            return;
+          }
+        }
+
+        currentUser = {
+          displayName: username,
+          photoURL: (users[username.toLowerCase()] && users[username.toLowerCase()].photoURL) || 'https://img.icons8.com/color/48/user.png'
+        };
+
+        localStorage.setItem('zinox_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        alert("تم تسجيل الدخول بنجاح!");
+      }
+    }
+
+    function openEditProfile() {
+      if (currentUser) {
+        document.getElementById('editDisplayName').value = currentUser.displayName;
+        document.getElementById('editPhotoURL').value = currentUser.photoURL;
+        document.getElementById('editProfileModal').style.display = 'flex';
+      }
+    }
+
+    function closeEditProfile() {
+      document.getElementById('editProfileModal').style.display = 'none';
+    }
+
+    function saveProfileChanges() {
+      const newName = document.getElementById('editDisplayName').value.trim();
+      const newPhoto = document.getElementById('editPhotoURL').value.trim();
+
+      if (currentUser) {
+        currentUser.displayName = newName || currentUser.displayName;
+        currentUser.photoURL = newPhoto || currentUser.photoURL;
+        localStorage.setItem('zinox_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        alert("تم تحديث الملف الشخصي!");
+        closeEditProfile();
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('zinox_user');
+      updateAuthUI();
+    }
+
+    function addMarketItem(type) {
+      if (!currentUser || currentUser.displayName.toLowerCase() !== OWNER_USERNAME.toLowerCase()) {
+        alert("⚠️ هذا الخيار مخصص لمالك الموقع فقط!");
+        return;
+      }
+
+      const name = document.getElementById(type === 'robux' ? 'robuxItemName' : 'ffItemName').value;
+      const price = document.getElementById(type === 'robux' ? 'robuxItemPrice' : 'ffItemPrice').value;
+      let imgUrl = document.getElementById(type === 'robux' ? 'robuxItemImg' : 'ffItemImg').value;
+
+      if (!name || !price) { alert("المرجو ملء الحقول المطلوبة!"); return; }
+      if (!imgUrl) { 
+        imgUrl = type === 'robux' 
+          ? 'https://img.icons8.com/color/96/roblox.png' 
+          : 'https://img.icons8.com/color/96/diamonds.png'; 
+      }
+
+      const gridId = type === 'robux' ? 'robuxGrid' : 'ffGrid';
+      const grid = document.getElementById(gridId);
+
+      const newCard = document.createElement('div');
+      newCard.className = 'card';
+      newCard.innerHTML = `
+        <img src="${imgUrl}" class="png-icon">
+        <h3>${name}</h3>
+        <div class="price">${price}</div>
+        <div class="seller-info">بواسطة: ${currentUser.displayName}</div>
+        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy">شراء الآن (Discord)</a>
+      `;
+
+      grid.prepend(newCard);
+      document.getElementById(type === 'robux' ? 'robuxItemName' : 'ffItemName').value = '';
+      document.getElementById(type === 'robux' ? 'robuxItemPrice' : 'ffItemPrice').value = '';
+      document.getElementById(type === 'robux' ? 'robuxItemImg' : 'ffItemImg').value = '';
+      alert("تم نشر الباقة بنجاح!");
+    }
+
+    function submitTrade() {
+      if (!currentUser) {
+        alert("⚠️ يجب عليك تسجيل الدخول أو إنشاء حساب أولاً لتتمكن من نشر العروض!");
+        openLogin();
+        return;
+      }
+
+      const category = document.getElementById('tradeCategory').value;
+      const have = document.getElementById('haveItem').value.trim();
+      const want = document.getElementById('wantItem').value.trim();
+
+      if (!have || !want) { alert("المرجو ملء الخانات!"); return; }
+
+      const tradeGrid = document.getElementById('tradeGrid');
+      const newCard = document.createElement('div');
+      newCard.className = 'card';
+      newCard.innerHTML = `
+        <img src="https://img.icons8.com/color/96/filled-swap.png" class="png-icon">
+        <div style="font-size:12px; color:#00b894; font-weight:bold;">[Trade ${category}]</div>
+        <h3>لديك: ${have}<br>تريد: ${want}</h3>
+        <div class="seller-info">بواسطة: ${currentUser.displayName}</div>
+        <button class="btn-buy" style="background:#00b894; color:#fff;" onclick="openChat('${currentUser.displayName}', '${have} -> ${want}')">تواصل للتبادل</button>
+      `;
+
+      tradeGrid.prepend(newCard);
+      document.getElementById('haveItem').value = '';
+      document.getElementById('wantItem').value = '';
+      alert("تم نشر عرض التبادل بنجاح!");
+    }
+
+    function openChat(seller, details) {
+      if (!currentUser) {
+        alert("⚠️ يجب عليك تسجيل الدخول أو إنشاء حساب أولاً للمحادثة!");
+        openLogin();
+        return;
+      }
+
+      document.getElementById('chatTitle').innerText = `محادثة مع: ${seller}`;
+      document.getElementById('chatOverlay').style.display = 'flex';
+      
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.innerHTML = `
+        <div class="chat-message msg-incoming">أهلاً! أنا مهتم بتبادل: (${details})</div>
+      `;
+    }
+
+    function closeChat() { document.getElementById('chatOverlay').style.display = 'none'; }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInputMsg');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatMessages = document.getElementById('chatMessages');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-message msg-outgoing';
+      userMsg.innerText = text;
+      chatMessages.appendChild(userMsg);
+      input.value = '';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function handleChatEnter(e) {
+      if (e.key === 'Enter') sendChatMessage();
+    }
+
+    function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
+    
+    function showPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.getElementById('sideMenu').classList.remove('active');
+      window.scrollTo(0, 0);
+    }
+
+    function openLogin() { 
+      document.getElementById('loginModal').style.display = 'flex'; 
+    }
+    
+    function closeLogin() { 
+      document.getElementById('loginModal').style.display = 'none'; 
+    }
+
+    window.onload = function() {
+      updateAuthUI();
+    };
+  </script>
+</body>
+</html>
